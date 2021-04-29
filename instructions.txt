@@ -1,0 +1,48 @@
+# Instructions for building a minimalistsic kernel, for practice sake and not suitable for full OS environment but good start for learning OS dev.
+
+
+1) Install dependencies with dependencies script
+./dependencies.sh
+
+2) Make a src directory in $home
+sudo mkdir $HOME/src
+
+3) cd in src directory install source folders for gcc and binutils
+cd $HOME/src
+
+4) Run preparation.sh script in src folder
+source ./preparation.sh
+or
+. ./preparation.sh
+
+4.1) unzip packages if zipped 
+
+5) # making sure script runs for correct version of source folder
+run compile binutils script in src folder as root
+./comple_binutils.sh
+
+6) Run preparation2.sh to export path to cross compiler
+source ./preparation2.sh
+
+7) # making sure script runs for correct version of source folder
+# When building complier it is recommended that we build a compiler not newer than the one in your system as you may run into problem elsewise
+# Workaround is building a new compiler for system if the installed compiler is newer than the current host system
+# However, 7.5.0 --> 7.5.3 is not big problem compared it 7.5.0 --> 11.0.1
+run build libgcc script in scr folder as root
+cd $HOME/src
+ 
+# The $PREFIX/bin dir _must_ be in the PATH. We did that above.
+which -- $TARGET-as || echo $TARGET-as is not in the PATH
+ 
+mkdir build-gcc
+cd build-gcc
+../gcc-7.5.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers
+make -j2 all-gcc
+make -j2 all-target-libgcc
+make -j2 install-gcc
+make -j2 install-target-libgcc
+
+8) Run preparation3.sh
+source ./preparation3.sh
+
+9) 
