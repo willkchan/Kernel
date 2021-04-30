@@ -1,5 +1,5 @@
 # Instructions for building a minimalistsic kernel, for practice sake and not suitable for full OS environment but good start for learning OS dev.
-
+# instructions built for kernel 2
 
 1) Install dependencies with dependencies script
 ./dependencies.sh
