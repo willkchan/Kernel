@@ -61,4 +61,4 @@ menuentry "myos" {
 
 13) Test your operating system
 qemu-system-i386 -cdrom myos.iso
-# if it loads correctly then we are good
+# check if it loads the message correctly
