@@ -18,7 +18,7 @@ or
 4.1) unzip packages if zipped 
 
 5) # making sure script runs for correct version of source folder
-run compile binutils script in src folder as root
+run compile binutils script in src folder
 ./comple_binutils.sh
 
 6) Run preparation2.sh to export path to cross compiler
@@ -28,21 +28,37 @@ source ./preparation2.sh
 # When building complier it is recommended that we build a compiler not newer than the one in your system as you may run into problem elsewise
 # Workaround is building a new compiler for system if the installed compiler is newer than the current host system
 # However, 7.5.0 --> 7.5.3 is not big problem compared it 7.5.0 --> 11.0.1
-run build libgcc script in scr folder as root
-cd $HOME/src
- 
-# The $PREFIX/bin dir _must_ be in the PATH. We did that above.
-which -- $TARGET-as || echo $TARGET-as is not in the PATH
- 
-mkdir build-gcc
-cd build-gcc
-../gcc-7.5.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers
-make -j2 all-gcc
-make -j2 all-target-libgcc
-make -j2 install-gcc
-make -j2 install-target-libgcc
+run build libgcc script in scr folder
 
-8) Run preparation3.sh
+./build_libgcc.sh
+./build_libgcc2.sh
+
+8) check and update path
+$HOME/opt/cross/bin/$TARGET-gcc --version
 source ./preparation3.sh
 
-9) 
+# Now that we have a cross compiler we can use it to build our kernel
+9) compile objects from start.s and kernel.c to yield start.o and kernel.o
+i686-elf-gcc -std=gnu99 -ffreestanding -g -c start.s -o start.o
+i686-elf-gcc -std=gnu99 -ffreestanding -g -c kernel.c -o kernel.o
+
+10) We link the two objects together to make our final executable kernel
+i686-elf-gcc -T linker.ld -o myos.bin -ffreestanding -O2 -nostdlib start.o kernel.o -lgcc
+or
+./link_kernel.sh
+
+11) Run sanity check to make sure our your file has a valid multibook header
+
+./sanity_checkm2.sh
+
+11.1) Make a grub.cfg with contents
+menuentry "myos" {
+	multiboot /boot/myos.bin
+}
+
+12) Build the a bootable cdrom image with script
+./build_iso.sh
+
+13) Test your operating system
+qemu-system-i386 -cdrom myos.iso
+# if it loads correctly then we are good
