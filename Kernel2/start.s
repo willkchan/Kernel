@@ -40,7 +40,7 @@
 		// Please note that on x86, the stack grows DOWNWARD. This is why we start at the top.
 		mov $stack_top, %esp // Set the stack pointer to the top of the stack
  
-		// Now we have a C-worthy (haha!) environment ready to run the rest of our kernel.
+		// Now we have a C environment ready to run the rest of our kernel.
 		// At this point, we can call our main C function.
 		call kernel_main
  
